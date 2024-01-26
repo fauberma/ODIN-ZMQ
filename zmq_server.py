@@ -28,5 +28,6 @@ def start_zmq_server():
         socket.close()
         context.term()
 
+
 if __name__ == "__main__":
     start_zmq_server()

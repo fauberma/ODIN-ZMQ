@@ -14,125 +14,113 @@ class OdinZMQ:
         self.socket = self.context.socket(zmq.REQ)
         self.socket.connect(f"tcp://{self.IP}:{self.port}")
 
-    #@classmethod
-    # def send_request(cls, request):
-    #     def wrap_REQ_REP(instance, *args):
-    #         REQ = request(instance, *args)
-    #         instance.socket.send_json(REQ)
-    #         REP= instance.socket.recv()
-    #         return json.loads(REP.decode('utf-8'))
-    #     return wrap_REQ_REP
-    #
-    # def get_frame(self, xbegin=0, xend=1280, ybegin=0, yend=1024, quality=90, bitmap=False):
-    #     request = {
-    #         "cmd": "get_frame",
-    #         "data": {
-    #             "xbegin": xbegin,
-    #             "xend": xend,
-    #             "ybegin": ybegin,
-    #             "yend": yend,
-    #             "quality": quality,
-    #             "bitmap": bitmap,
-    #         }
-    #     }
-    #     self.socket.send_json(request)
-    #     reply = self.socket.recv()
-    #     width = struct.unpack('I', reply[0:4])
-    #     height = struct.unpack('I', reply[4:8])
-    #     return width, height, reply[8:]
-    #
-    # @send_request
-    # def recording_start(self, num_frames=100, filtered=True):
-    #     request = {
-    #         "cmd": "recording_start",
-    #         "data": {
-    #             "num_frames": num_frames,
-    #             "filtered": filtered,
-    #         }
-    #     }
-    #     return request
-    #
-    # @send_request
-    # def recording_stop(self):
-    #     request = {
-    #         "cmd": "recording_stop",
-    #     }
-    #     return request
-    #
-    # @send_request
-    # def recording_status(self):
-    #     request = {
-    #         "cmd": "recording_status",
-    #     }
-    #     return request
-    #
-    # def recording_get_frame(self, frame, roi=0, background=False, bitmap=True, quality=90):
-    #     request = {
-    #         "cmd": "recording_get_frame",
-    #         "data": {
-    #             "frame": frame,
-    #             "roi": roi,
-    #             "background": background,
-    #             "bitmap": bitmap,
-    #             "quality": quality,
-    #         }
-    #     }
-    #     self.socket.send_json(request)
-    #     reply = self.socket.recv()
-    #     return reply
-    #
-    # @send_request
-    # def recording_values(self, frames, roi=0):
-    #     request = {
-    #         "cmd": "recording_values",
-    #         "data": {
-    #             "frames": frames,
-    #             "roi": roi,
-    #         }
-    #     }
-    #     return request
-    #
-    # @send_request
-    # def get_all(self, ):
-    #     request = {
-    #         "cmd": "get_all",
-    #     }
-    #     return request
-    #
-    # @send_request
-    # def set(self, name, value):
-    #     request = {
-    #         "cmd": "set",
-    #         "data": {
-    #             "name": name,
-    #             "value": value,
-    #         }
-    #     }
-    #     return request
-    #
-    # @send_request
-    # def sorting_start(self, reset=False):
-    #     request = {
-    #         "cmd": "sorting_start",
-    #         "data": {
-    #             "reset": reset,
-    #         }
-    #     }
-    #     return request
-    #
-    # @send_request
-    # def sorting_status(self):
-    #     request = {
-    #         "cmd": "sorting_status",
-    #     }
-    #     return request
+    def send_request(self, REQ):
+        self.socket.send_json(REQ)
+        REP = self.socket.recv()
+        return json.loads(REP.decode('utf-8'))
 
-    def stream_configure(self, mode, roi=0):
+    def get_frame(self, xbegin=0, xend=1280, ybegin=0, yend=1024, quality=90, bitmap=False):
+        request = {
+            "cmd": "get_frame",
+            "data": {
+                "xbegin": xbegin,
+                "xend": xend,
+                "ybegin": ybegin,
+                "yend": yend,
+                "quality": quality,
+                "bitmap": bitmap,
+            }
+        }
+        self.socket.send_json(request)
+        reply = self.socket.recv()
+        width = struct.unpack('I', reply[0:4])
+        height = struct.unpack('I', reply[4:8])
+        return width, height, reply[8:]
+
+    def recording_start(self, num_frames=100, filtered=True):
+        request = {
+            "cmd": "recording_start",
+            "data": {
+                "num_frames": num_frames,
+                "filtered": filtered,
+            }
+        }
+        return self.send_request(request)
+
+    def recording_stop(self):
+        request = {
+            "cmd": "recording_stop",
+        }
+        return self.send_request(request)
+
+    def recording_status(self):
+        request = {
+            "cmd": "recording_status",
+        }
+        return self.send_request(request)
+
+    def recording_get_frame(self, frame, roi=0, background=False, bitmap=True, quality=90):
+        request = {
+            "cmd": "recording_get_frame",
+            "data": {
+                "frame": frame,
+                "roi": roi,
+                "background": background,
+                "bitmap": bitmap,
+                "quality": quality,
+            }
+        }
+        self.socket.send_json(request)
+        reply = self.socket.recv()
+        return reply
+
+    def recording_values(self, frames, roi=0):
+        request = {
+            "cmd": "recording_values",
+            "data": {
+                "frames": frames,
+                "roi": roi,
+            }
+        }
+        return self.send_request(request)
+
+    def get_all(self, ):
+        request = {
+            "cmd": "get_all",
+        }
+        return self.send_request(request)
+
+    def set(self, name, value):
+        request = {
+            "cmd": "set",
+            "data": {
+                "name": name,
+                "value": value,
+            }
+        }
+        return self.send_request(request)
+
+    def sorting_start(self, reset=False):
+        request = {
+            "cmd": "sorting_start",
+            "data": {
+                "reset": reset,
+            }
+        }
+        return self.send_request(request)
+
+    def sorting_status(self):
+        request = {
+            "cmd": "sorting_status",
+        }
+        return self.send_request(request)
+
+    def stream_configure(self, mode, roi=[0, ]):
         """
         Configure stream of parameters
 
         :param mode: str all|filtered
-        :param roi: int 0|1
+        :param roi: arr [0,]|[1,]|[0,1]
         :return: dict request dictionary
         """
 
@@ -143,10 +131,7 @@ class OdinZMQ:
                 "roi": roi,
             }
         }
-
-        self.socket.send_json(request)
-        reply= self.socket.recv()
-        return json.loads(reply.decode('utf-8'))
+        return self.send_request(request)
 
     def stream_get(self, mode=None):
         """
@@ -164,16 +149,14 @@ class OdinZMQ:
                 }
             }
             self.socket.send_json(request)
-            mesg = self.socket.recv()
-            return mesg
+            msg = self.socket.recv()
+            return msg
 
         else:
             request = {
                 "cmd": "stream_get",
             }
-            self.socket.send_json(request)
-            mesg = self.socket.recv()
-            return json.loads(mesg.decode('utf-8'))
+            return self.send_request(request)
 
     def close_socket(self):
         self.socket.close()
