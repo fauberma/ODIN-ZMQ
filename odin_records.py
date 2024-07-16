@@ -87,7 +87,7 @@ class Odin:
 
             # Process each vertex (assuming each vertex has an x and y coordinate)
             self.vertices = np.array([float(coord.strip()) for coord in vertices if coord.strip() != '']).reshape((region_0_0_size,2))
-            self.vertices = self.vertices[:, ::-1]
+            #self.vertices = self.vertices[:, ::-1]
 
         else:
             print("No polygon for sorting in this script.")
@@ -100,8 +100,8 @@ class Odin:
         if matches:
             # Print the extracted arguments for each match
             for match in matches:
-                chan_x, x = match[1].split('.')
-                chan_y, y = match[0].split('.')
+                chan_x, x = match[0].split('.')
+                chan_y, y = match[1].split('.')
                 self.sorting_x = x+chan_x[2]
                 self.sorting_y = y+chan_y[2]
 
